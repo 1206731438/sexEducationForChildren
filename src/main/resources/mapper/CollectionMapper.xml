@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.sexEducationForChildren.mapper.CollectionMapper">
+    <delete id="delById">
+        delete from child_collection
+        where child_collection_id = #{collectionId}
+    </delete>
+    <select id="selectPage" resultType="com.example.sexEducationForChildren.vo.CollectionVo">
+        select cc.child_collection_id as collectionId,
+               cc.child_new_id as newId,
+               cn.child_new_type as newType,
+               cn.child_new_title as newTitle,
+               cn.child_new_content as newContent,
+               cn.child_new_imgs as newImgs
+        from child_collection cc left join child_new cn on cc.child_new_id = cn.child_new_id
+        where cc.child_user_id = #{userId}
+            <if test="search != null and search !=''">
+                and cn.child_new_title like concat('%',#{search},'%')
+            </if>
+        order by cc.child_collection_id desc
+    </select>
+</mapper>

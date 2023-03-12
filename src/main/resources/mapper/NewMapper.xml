@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.sexEducationForChildren.mapper.NewMapper">
+    <insert id="instFabulous">
+        insert into child_fabulous(child_new_id,child_user_id)
+                values (#{newId},#{userId})
+    </insert>
+    <insert id="instCollection">
+        insert into child_collection(child_new_id,child_user_id)
+            values (#{newId},#{userId})
+    </insert>
+    <insert id="instComment">
+        insert into child_comment(child_new_id,child_user_id,child_comment_content,child_comment_date)
+            values (#{newId},#{userId},#{commentContent},NOW())
+    </insert>
+    <update id="read">
+        update child_new set child_new_read = child_new_read + 1
+        where child_new_id = #{newId}
+    </update>
+    <update id="CommentFabulous">
+        update child_comment set child_comment_fabulous = child_comment_fabulous + 1
+        where child_comment_Id = #{commentId}
+    </update>
+    <delete id="delFabulousById">
+        delete from child_fabulous
+        where child_fabulous_id = #{fabulousId}
+    </delete>
+    <select id="selectPage" resultType="com.example.sexEducationForChildren.vo.NewVo">
+        select cn.child_new_id as newId,
+               cn.child_new_title as newTitle,
+               cn.child_new_content as newContent,
+               cn.child_new_date as newDate,
+               (select count(*)
+               from child_fabulous cf
+               where cn.child_new_id = cf.child_new_id) as newFabulous,
+               (select count(*)
+                from child_collection cc
+                where cc.child_new_id = cn.child_new_id) as newCollection,
+               cn.child_new_read as newRead,
+               cn.child_new_type as newType,
+               cn.child_new_imgs as newImgs
+        from child_new cn
+        where child_new_type = #{type}
+            <if test=" search != null and search != '' ">
+                and cn.child_new_title like CONCAT('%',#{search},'%')
+            </if>
+        order by cn.child_new_date desc
+    </select>
+    <select id="selFabulousByUserIdAndNewId" resultType="java.lang.Integer">
+        select child_fabulous_id
+        from child_fabulous
+        where child_new_id = #{newId}
+            and child_user_id = #{userId}
+    </select>
+    <select id="selCollByUserIdAndNewId" resultType="java.lang.Integer">
+        select child_collection_id
+        from child_collection
+        where child_new_id = #{newId}
+            and child_user_id = #{userId}
+    </select>
+    <select id="selById" resultType="com.example.sexEducationForChildren.vo.NewVo">
+        select cn.child_new_id as newId,
+                cn.child_new_title as newTitle,
+                cn.child_new_content as newContent,
+                cn.child_new_date as newDate,
+                (select count(*)
+                from child_fabulous cf
+                where cn.child_new_id = cf.child_new_id) as newFabulous,
+                (select count(*)
+                from child_collection cc
+                where cc.child_new_id = cn.child_new_id) as newCollection,
+                cn.child_new_read as newRead,
+                cn.child_new_type as newType,
+                cn.child_new_imgs as newImgs
+        from child_new cn
+        where cn.child_new_id = #{newId}
+    </select>
+    <select id="selNewTitle" resultType="com.example.sexEducationForChildren.entity.NewEntity">
+        select child_new_id as newId,
+               child_new_title as newTitle,
+               child_new_date as newDate
+        from child_new
+        where child_new_type = 'new'
+        order by child_new_date desc
+        limit 10
+    </select>
+    <select id="selComment" resultType="com.example.sexEducationForChildren.vo.CommentVo">
+        select cc.child_comment_Id as commentId,
+               cc.child_comment_content as commentContent,
+               cc.child_comment_date as commentDate,
+               cc.child_comment_fabulous as commentFabulous,
+               cc.child_user_id as userId,
+               cu.child_user_nickname as nickname,
+               cu.child_user_imgsrc as userImg
+        from child_comment cc left join child_user cu on cc.child_user_id = cu.child_user_id
+        where cc.child_new_id = #{newId}
+        order by cc.child_comment_date desc
+    </select>
+</mapper>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.sexEducationForChildren.mapper.UserMapper">
+    <insert id="register">
+        insert into child_user(child_user_username,
+                               child_user_nickname,
+                               child_user_password,
+                               child_user_salt,
+                               child_user_sex,
+                               child_user_age,
+                               child_user_email,
+                               child_user_phone,
+                               child_user_introduction,
+                               child_user_date,
+                               child_user_imgsrc)
+                    values(#{user.username},
+                           #{user.nickname},
+                           #{user.password},
+                           #{user.salt},
+                           #{user.sex},
+                           #{user.age},
+                           #{user.email},
+                           #{user.phone},
+                           #{user.introduction},
+                           NOW(),
+                           #{user.imgSrc})
+    </insert>
+    <update id="updateUserById">
+        update child_user set child_user_nickname = #{user.nickname},
+                          child_user_sex = #{user.sex},
+                          child_user_age = #{user.age},
+                          child_user_email = #{user.email},
+                          child_user_phone = #{user.phone},
+                          child_user_introduction = #{user.introduction}
+        where child_user_id = #{user.userId}
+    </update>
+    <update id="updateImg">
+        update child_user set child_user_imgsrc = #{imgSrc}
+        where child_user_id = #{userId}
+    </update>
+    <select id="getUserByUsername" resultType="com.example.sexEducationForChildren.entity.UserEntity">
+        select child_user_id as userId,
+               child_user_username as username,
+               child_user_password as password,
+               child_user_salt as salt
+        from child_user
+        where child_user_username = #{username}
+    </select>
+    <select id="selUserById" resultType="com.example.sexEducationForChildren.entity.UserEntity">
+        select child_user_id as userId,
+               child_user_username as username,
+               child_user_nickname as nickname,
+               child_user_sex as sex,
+               child_user_age as age,
+               child_user_email as email,
+               child_user_phone as phone,
+               child_user_introduction as introduction,
+               child_user_date as createDate,
+               child_user_imgsrc as imgSrc
+        from child_user
+        where child_user_id = #{userId}
+    </select>
+</mapper>

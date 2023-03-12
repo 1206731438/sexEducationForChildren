@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.sexEducationForChildren.mapper.ProjectMapper">
+    <select id="selectPage" resultType="com.example.sexEducationForChildren.vo.ProjectVo">
+        select child_project_id as projectId,
+               child_project_imgs as projectImgs,
+               child_project_title as projectTitle,
+               child_project_content as projectContent,
+               child_project_date as projectDate
+        from child_project
+        where 1 = 1
+            <if test="search != null and search != ''">
+                and child_project_title like concat('%',#{search},'%')
+            </if>
+        order by child_project_date desc
+    </select>
+    <select id="selById" resultType="com.example.sexEducationForChildren.vo.ProjectVo">
+        select child_project_id as projectId,
+               child_project_imgs as projectImgs,
+               child_project_title as projectTitle,
+               child_project_content as projectContent,
+               child_project_date as projectDate
+        from child_project
+        where child_project_id = #{projectId}
+    </select>
+</mapper>

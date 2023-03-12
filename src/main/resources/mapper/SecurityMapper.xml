@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.sexEducationForChildren.mapper.SecurityMapper">
+    <select id="selectPage" resultType="com.example.sexEducationForChildren.entity.SecurityEntity">
+        select child_security_id as securityId,
+               child_security_title as securityTitle,
+               child_security_video as securityVideo,
+               child_security_date as securityDate
+        from child_security
+        where 1 = 1
+            <if test="search != null and search != ''">
+                and child_security_title like concat('%',#{search},'%')
+            </if>
+        order by child_security_date desc
+    </select>
+</mapper>

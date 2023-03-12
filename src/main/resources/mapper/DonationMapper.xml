@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.sexEducationForChildren.mapper.DonationMapper">
+    <insert id="inst">
+        insert into child_donation(child_project_id,child_user_id,child_donation_money,child_donation_date)
+                values (#{projectId},#{userId},#{money},NOW())
+    </insert>
+    <update id="updateMoney">
+        update child_donation set child_donation_money = child_donation_money+#{money},
+                                  child_donation_date = NOW()
+        where child_donation_id = #{donationId}
+    </update>
+    <delete id="delById">
+        delete from child_donation where child_donation_id = #{donationId}
+    </delete>
+    <select id="selectPage" resultType="com.example.sexEducationForChildren.vo.DonationVo">
+        select cd.child_donation_id as donationId,
+               cd.child_project_id as projectId,
+               cp.child_project_title as projectTitle,
+               cd.child_donation_date as donationDate,
+               cd.child_donation_money as donationMoney
+        from child_donation cd left join child_project cp on cd.child_project_id = cp.child_project_id
+        where cd.child_user_id = #{userId}
+            <if test="search != null and search != ''">
+                and cp.child_project_title like concat('%',#{search},'%')
+            </if>
+        order by cd.child_donation_date desc
+    </select>
+    <select id="selDonation" resultType="com.example.sexEducationForChildren.po.DonationUserPo">
+        select cd1.child_donation_id as donationId,
+               cd1.child_user_id as userId,
+               (select sum(child_donation_money)
+                from child_donation cd2
+                where cd1.child_user_id = cd2.child_user_id) as donationMoney,
+               cu.child_user_nickname as userNickName
+        from child_donation cd1 left join child_user cu on cd1.child_user_id = cu.child_user_id
+        group by cd1.child_user_id
+        order by cd1.child_donation_id DESC
+    </select>
+    <select id="selDonationUser" resultType="com.example.sexEducationForChildren.vo.DonationUserVo">
+        select (select sum(child_donation_money) from child_donation) as totalMoney
+    </select>
+    <select id="selDonationById" resultType="java.lang.Integer">
+        select child_donation_id
+        from child_donation
+        where child_project_id = #{projectId}
+            and child_user_id = #{userId}
+    </select>
+</mapper>
